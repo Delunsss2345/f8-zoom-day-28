@@ -5,28 +5,28 @@ const musicPlayer = {
             img: "./images/image1.jpg",
             title: "交界-伴奏",
             artist: "陈嘉杰＆陳嘉傑",
-            audio: "./audios/audio1.mp3"
+            audio: "./audios/audio2.mp3"
         },
         {
             id: 2,
             img: "./images/image2.jpg",
-            title: "Blinding Lights",
+            title: "思念刘德海",
             artist: "The Weeknd",
-            audio: "./audios/audio2.mp3"
+            audio: "./audios/audio3.mp3"
         },
         {
             id: 3,
             img: "./images/image3.jpg",
             title: "不入名贤传",
             artist: "Dua Lipa",
-            audio: "./audios/audio3.mp3"
+            audio: "./audios/audio4.mp3"
         },
         {
             id: 4,
             img: "./images/image4.jpg",
             title: "不做你的朋友",
             artist: "高旭-FelixBennett",
-            audio: "./audios/audio4.mp3"
+            audio: "./audios/audio1.mp3"
         }
     ],
     liked: [],
@@ -208,6 +208,7 @@ const musicPlayer = {
             this.currentIndex = this.currentIndex - 1 ;
         } 
         else {
+            this.currentIndex = this.currentIndex - 1 ;
             this.isPlaying = false ; 
             this.audio.pause() ; 
             return ;
@@ -217,7 +218,7 @@ const musicPlayer = {
     },
     prevMusic() {
         this.isPlaying = true;
-        if (this.currentIndex + 1 < this.musics.length) {
+        if (this.currentIndex <= this.musics.length) {
             this.currentIndex = this.currentIndex + 1;
         } else {
             this.isPlaying = false;
@@ -256,16 +257,14 @@ const musicPlayer = {
     handleBack(e) {
         e.preventDefault();
         e.stopPropagation();
-        if (this.dragging) return; 
-        const queIdx = this.queue.length - 1 ; 
-        const queueItem = this.queue[queIdx];
+        if (this.dragging) return;
 
-       
+        const queueItem = this.queue.pop(); 
+        this.prevMusic();
+
         const returnMusic = this.createMusic(queueItem);
+        returnMusic.dataset.musicId = this.currentIndex;
 
-        this.queue.splice(queIdx, 1);
-        returnMusic.dataset.musicId = this.currentIndex + 1;
-        this.prevMusic() ; 
         this.musicList.appendChild(returnMusic);
     } ,
     setupEventControls() {
