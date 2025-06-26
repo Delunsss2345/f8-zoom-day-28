@@ -265,9 +265,8 @@ const musicPlayer = {
 
         this.queue.splice(queIdx, 1);
         returnMusic.dataset.musicId = this.currentIndex + 1;
-        this.currentIndex++;
-        this.musicList.appendChild(returnMusic);
         this.prevMusic() ; 
+        this.musicList.appendChild(returnMusic);
     } ,
     setupEventControls() {
         this.play.onclick = this.handlePlayPause.bind(this);
