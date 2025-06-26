@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    touch-action: none;
+    background-color: #242629;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container {
+    width: 1060px;
+    margin: 0 auto;
+}
+
+.music-list {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;         
+    height: 300px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    z-index: 1000;
+}
+
+.music-item {
+    position: absolute;
+    width: 100%;         
+    height: 100%;       
+    padding: 10px;
+    background-color: #16161a;
+    border-radius: 12px;
+    border: 1px solid #454343;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    text-align: center;
+}
+
+
+.music-thumbnail {
+    width: 100%;
+    height: 80%;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.music-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.music-info {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    flex-direction: column;
+    gap:2px;
+    align-items: flex-start;
+    color: #fffffe;
+}
+
+.music-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.music-artist {
+    font-size: 10px;
+    color: #94a1b2;
+}
+
+.music-control {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 2000;
+}
+.control-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #16161a;
+    border: none;
+    cursor: pointer;
+    color: #fffffe;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn.play {
+    position: relative;
+    transform: scale(1.2);
+}
+
+
+.control-btn.like {
+    color: green;
+}
+.control-btn.dislike {
+    color: red;
+} 
+
+
+.music-item:nth-last-child(3) {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.music-item:nth-last-child(2) {
+    transform: translateY(-25px) scale(1.04);
+
+}
+
+.music-item:nth-last-child(1) {
+    transform: translateY(-40px) scale(1.06);
+    box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
+}
+
