@@ -215,6 +215,17 @@ const musicPlayer = {
         this.setupMusic();
        
     },
+    prevMusic() {
+        this.isPlaying = true;
+        if (this.currentIndex + 1 < this.musics.length) {
+            this.currentIndex = this.currentIndex + 1;
+        } else {
+            this.isPlaying = false;
+            this.audio.pause();
+            return;
+        }
+        this.setupMusic();
+    },
 
     handlePlayPause() {
         if (this.currentIndex < 0 || this.currentIndex >= this.musics.length) return;
@@ -256,6 +267,7 @@ const musicPlayer = {
         returnMusic.dataset.musicId = this.currentIndex + 1;
         this.currentIndex++;
         this.musicList.appendChild(returnMusic);
+        this.prevMusic() ; 
     } ,
     setupEventControls() {
         this.play.onclick = this.handlePlayPause.bind(this);
