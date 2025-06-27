@@ -1,26 +1,48 @@
-#### 🎵 Music Player Mini App ####
+# 🎵 Music Player Mini App
 
-### Tính năng chính ###
-🎶 Phát nhạc tự động: Nhạc sẽ tự động chuyển sang bài tiếp theo khi bài hiện tại kết thúc.
+Một ứng dụng phát nhạc mini hiện đại với giao diện đẹp mắt và trải nghiệm người dùng tuyệt vời.
 
-### Vuốt trái/phải để điều hướng ###
+## ✨ Tính năng chính
 
-Vuốt trái hoặc click nút ❌ (Dislike) để chuyển bài tiếp theo.
+### 🎶 Phát nhạc tự động
+- Nhạc sẽ tự động chuyển sang bài tiếp theo khi bài hiện tại kết thúc
+- Không cần thao tác thủ công, trải nghiệm liền mạch
 
-Vuốt phải hoặc click nút ❤️ (Like) để chuyển bài tiếp theo.
+### Vuốt trái/phải để điều hướng
+- **Vuốt trái** hoặc click nút **❌ (Dislike)** để chuyển bài tiếp theo
+- **Vuốt phải** hoặc click nút **❤️ (Like)** để chuyển bài tiếp theo
+- Hỗ trợ cả cử chí vuốt và click để phù hợp mọi thiết bị
 
-Undo / Quay lại bài trước: Khi vừa next bài, có thể quay lại bài trước đó bằng một thao tác undo (hoặc xử lý riêng).
+### Undo / Quay lại bài trước
+- Khi vừa chuyển bài, có thể quay lại bài trước đó bằng thao tác undo
+- Tính năng tiện lợi khi muốn nghe lại bài nhạc vừa bỏ qua
 
-Chế độ trộn (shuffle): Nhạc được trộn ngẫu nhiên để tăng trải nghiệm.
+### Chế độ trộn (Shuffle)
+- Nhạc được trộn ngẫu nhiên để tăng trải nghiệm
+- Đảm bảo không bị lặp khi chưa trộn lại danh sách
 
-💡 Cách sử dụng
-Dùng chuột hoặc ngón tay để kéo thẻ bài nhạc sang trái/phải để tương tác.
+## Cách sử dụng
 
-Có thể click vào nút ❌ hoặc ❤️ để next bài nhanh mà không cần vuốt.
+### Điều khiển cơ bản
+1. **Kéo thẻ bài nhạc**: Dùng chuột hoặc ngón tay để kéo thẻ sang trái/phải
+2. **Click nút tương tác**: Click vào nút ❌ hoặc ❤️ để chuyển bài nhanh
+3. **Phát tự động**: Ứng dụng tự động phát nhạc kế tiếp
 
-Ứng dụng tự động phát nhạc kế tiếp và đảm bảo không bị lặp khi chưa trộn lại.
+### Tương tác với bài nhạc
+- **❤️ Like**: Đánh dấu yêu thích và chuyển bài tiếp theo
+- **❌ Dislike**: Bỏ qua bài hiện tại và chuyển sang bài mới
+- **🔄 Undo**: Quay lại bài trước đó (xuất hiện sau khi chuyển bài)
 
-🛠 Công nghệ sử dụng
-HTML, CSS, JavaScript thuần (Vanilla JS)
-DOM manipulation
-Event handling (drag, click, transition)
+### Chế độ phát
+- **🔀 Shuffle**: Trộn ngẫu nhiên thứ tự bài hát
+- **➡️ Sequential**: Phát theo thứ tự danh sách
+
+## 🛠 Công nghệ sử dụng
+
+### Frontend Technologies
+- **HTML5**: Cấu trúc ứng dụng
+- **CSS3**: Styling và animations
+- **JavaScript thuần (Vanilla JS)**: Logic ứng dụng
+
+
+*Tạo với ❤️ để mang đến trải nghiệm âm nhạc tuyệt vời*
