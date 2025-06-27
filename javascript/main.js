@@ -35,7 +35,7 @@ const musicPlayer = {
     currentIndex: 0,
     isPlaying: false,
     dragging: false,
-    queue : [] , 
+    stack : [] , 
     currentPos: { x: 0, deltaX: 0, deltaY: 40, scale: 1.06 },
 
     getTouchX(e) {
@@ -103,6 +103,7 @@ const musicPlayer = {
         if (!target) return;
         
         this.currentMusic = target;
+        this.currentMusic.style.transition = "none" ; 
         this.dragging = true;
         this.currentPos = {
             x: this.getTouchX(e),
@@ -152,6 +153,12 @@ const musicPlayer = {
             this.currentMusic.style.transform = "";
             this.currentMusic.style.outlineColor = "transparent";
             this.resetButtons();
+            this.currentPos = {
+                x: 0,
+                deltaX: 0,
+                deltaY: 40,
+                scale: 1.06
+            };
             return;
         }
 
@@ -169,29 +176,35 @@ const musicPlayer = {
              rotate(${rotate}deg) scale(${this.currentPos.scale})`;
         this.currentMusic.style.opacity = 0;
 
-        const music = this.musics[this.currentIndex];
-        
         
         if (rotate > 4) {
-            this.btnLike.style.transform = "scale(1.1)";
             this.btnLike.style.backgroundColor = "#00C897";
             this.btnLike.style.color = "#fff";
             this.currentMusic.style.outlineColor = "green";
+
         } else if (rotate < -4) {
-            this.btnDisLike.style.transform = "scale(1.1)";
             this.btnDisLike.style.backgroundColor = "#FF6B6B";
             this.btnDisLike.style.color = "#fff";
             this.currentMusic.style.outlineColor = "red";
+
         } else {
             this.currentMusic.style.outlineColor = "transparent";
-        }
-        this.queue.push(this.musics[this.currentIndex]);
+            this.currentMusic.style.transition = "none";
+            
+        }   
 
-        console.log(this.queue) ; 
-        this.currentMusic.ontransitionend = () => {
+        this.stack.push(this.musics[this.currentIndex]);
+        this.currentMusic.addEventListener('transitionend', () => {
             this.currentMusic.remove();
             this.resetButtons();
-        };
+            this.currentPos = {
+                x: 0,
+                deltaX: 0,
+                deltaY: 40,
+                scale: 1.06
+            };
+        }, { once: true });
+
         setTimeout(() => {
             this.nextMusic();
         } , 400)
@@ -203,6 +216,7 @@ const musicPlayer = {
     },
 
     nextMusic() {
+
         this.isPlaying = true ;
         if (this.currentIndex - 1 >= 0) {
             this.currentIndex = this.currentIndex - 1 ;
@@ -217,6 +231,7 @@ const musicPlayer = {
        
     },
     prevMusic() {
+       
         this.isPlaying = true;
         if (this.currentIndex <= this.musics.length) {
             this.currentIndex = this.currentIndex + 1;
@@ -258,20 +273,38 @@ const musicPlayer = {
         e.preventDefault();
         e.stopPropagation();
         if (this.dragging) return;
-
-        const queueItem = this.queue.pop(); 
+        if(this.stack.length === 0) return ;  
+        const stackItem = this.stack.pop(); 
         this.prevMusic();
 
-        const returnMusic = this.createMusic(queueItem);
+        const returnMusic = this.createMusic(stackItem);
         returnMusic.dataset.musicId = this.currentIndex;
 
         this.musicList.appendChild(returnMusic);
+
     } ,
+    handleShuffleMusic(e) {
+        for (let i = this.musics.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = this.musics[i];
+            this.musics[i] = this.musics[j];
+            this.musics[j] = temp;
+        }
+        this.renderMusic() ; 
+        this.currentIndex = this.musics.length - 1 ; 
+        this.setupMusic() ; 
+    },
+    updateStyleRunnable() {
+        const val = this.progress.value;
+        progress.style.background = `linear-gradient(to right, #16161a ${val}%, #444 25%)`;
+    },
+
     setupEventControls() {
         this.play.onclick = this.handlePlayPause.bind(this);
         this.btnLike.onclick = this.handleLike.bind(this);
         this.btnDisLike.onclick = this.handleDislike.bind(this);
         this.btnBack.onclick = this.handleBack.bind(this) ; 
+        this.btnShuffle.onclick = this.handleShuffleMusic.bind(this) ;
 
         this.audio.onplay = () => {
             this.isPlaying = true;
@@ -284,9 +317,33 @@ const musicPlayer = {
             this.playIcon.classList.remove("fa-pause");
             this.playIcon.classList.add("fa-play");
         };
+        ; 
+
+
+
+        this.audio.ontimeupdate = () => {
+            if (this.progress.seeking) return;
+            const progressPercent = (this.audio.currentTime / this.audio.duration) *100;
+            this.progress.value = progressPercent || 0;
+            this.updateStyleRunnable() ; 
+        };
+
+        this.progress.onmousedown = () => {
+            this.progress.seeking = true;
+          
+        };
+
+        this.progress.onmouseup = () => {
+            const targetPercent = +this.progress.value;
+            const seekTime = (this.audio.duration / 100) * targetPercent;
+            this.audio.currentTime = seekTime;
+            this.updateStyleRunnable() ;
+            this.progress.seeking = false;
+        };
 
         this.audio.onended = () => {
             this.currentMusic.remove();
+            this.stack.push(this.musics[this.currentIndex]);
             this.nextMusic();
         };
     },
@@ -295,7 +352,6 @@ const musicPlayer = {
         if (this.currentIndex >= 0) {
             this.currentMusic = this.musicList.querySelector(`[data-music-id="${this.currentIndex}"]`);
         } 
-
 
         this.audio.oncanplay = () => {
             if (this.isPlaying) {
@@ -315,7 +371,9 @@ const musicPlayer = {
         this.musicList = document.querySelector('.music-list');
         this.btnLike = document.querySelector('.like');
         this.btnDisLike = document.querySelector('.dislike');
+        this.btnShuffle = document.querySelector('.control-btn.shuffle')
         this.btnBack = document.querySelector('.control-btn.back') ; 
+        this.progress = document.getElementById("progress");
         this.play = document.querySelector('.control-btn.play');
         this.playIcon = document.querySelector(".play-icon");
         this.audio = document.getElementById('audio');

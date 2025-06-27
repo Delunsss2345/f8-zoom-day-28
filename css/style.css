@@ -42,7 +42,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease, opacity 0.3s ease;
     text-align: center;
 }
 
@@ -109,6 +108,9 @@ body {
     justify-content: center;
 }
 
+.control-btn {
+    transition: color 0.3s , background 0.2s , transform 0.3s;
+}
 .control-btn.play {
     position: relative;
     transform: scale(1.2);
@@ -122,18 +124,73 @@ body {
     color: red;
 } 
 
+.control-btn.back:hover {
+    color: #242629;
+    background-color: #94a1b2;
+}
+
+.control-btn.shuffle:hover {
+    color: #242629;
+    background-color: #94a1b2;
+}
+.progress-container {
+  position: fixed;
+  width: 350px;
+  left: 50%;
+  bottom: 110px;
+  transform: translateX(-50%);
+}
+
+.progress-bar {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  transition: background 0.3s;
+  cursor: pointer;
+  background: linear-gradient(to right, #161616 0%, #444 25%);
+}
+
+.progress-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #16161a; 
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 2px #000;
+  margin-top: -4px; 
+}
+.progress-bar::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #16161a;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 2px #000;
+}
+
+.progress-bar::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+}
+
 
 .music-item:nth-last-child(3) {
-    transform: translateY(-10px) scale(1.02);
+    transition: transform 0.3s;
+    transform: translateY(-10px) scale(1.01);
 }
 
 .music-item:nth-last-child(2) {
-    transform: translateY(-25px) scale(1.04);
+    transition: transform 0.3s;
+    transform: translateY(-25px) scale(1.03);
 
 }
 
 .music-item:nth-last-child(1) {
-    transform: translateY(-40px) scale(1.06);
+    transition: transform 0.3s;
+    transform: translateY(-40px) scale(1.05);
     box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
 
