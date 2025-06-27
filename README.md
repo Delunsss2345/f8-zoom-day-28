@@ -1,5 +1,4 @@
 #### 🎵 Music Player Mini App ####
-Ứng dụng phát nhạc đơn giản với hiệu ứng swipe hiện đại và nhiều tính năng trực quan, thân thiện với người dùng.
 
 ### Tính năng chính ###
 🎶 Phát nhạc tự động: Nhạc sẽ tự động chuyển sang bài tiếp theo khi bài hiện tại kết thúc.
