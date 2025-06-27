@@ -37,6 +37,7 @@ body {
     background-color: #16161a;
     border-radius: 12px;
     border: 1px solid #454343;
+    outline: 2px solid transparent;
     cursor: grab;
     display: flex;
     flex-direction: column;
@@ -123,6 +124,14 @@ body {
 .control-btn.dislike {
     color: red;
 } 
+.control-btn.like:hover {
+    color: #fff;
+    background-color: #00C897;
+}
+.control-btn.dislike:hover {
+    color: #fff;
+    background-color: #FF6B6B;
+}
 
 .control-btn.back:hover {
     color: #242629;
@@ -147,7 +156,7 @@ body {
   height: 4px;
   border-radius: 2px;
   outline: none;
-  transition: background 0.3s;
+  transition: all 0.3s;
   cursor: pointer;
   background: linear-gradient(to right, #161616 0%, #444 25%);
 }

@@ -29,8 +29,6 @@ const musicPlayer = {
             audio: "./audios/audio1.mp3"
         }
     ],
-    liked: [],
-    disliked: [],
     currentMusic: null,
     currentIndex: 0,
     isPlaying: false,
@@ -112,7 +110,14 @@ const musicPlayer = {
             scale: 1.06
         };
     },
+    //Hàm gộp hiệu ứng
+    handleButtonEffect(btn, status) {
+        btn.style.transform = "scale(1.1)";
+        btn.style.backgroundColor =   status === "like" ? "#00C897" : "#FF6B6B";
+        btn.style.color = "#fff";
 
+    },
+    //Hàm kéo chuyển
     handlerOnTouchMove(e) {
         if (!this.dragging || !this.currentMusic) return;
         
@@ -120,28 +125,25 @@ const musicPlayer = {
         this.currentPos.deltaX = this.getTouchX(e) - this.currentPos.x;
         
         this.resetButtons();
-        this.currentMusic.style.transition = "none";
+        this.currentMusic.style.transition = "outline-color .2s";
         
         const rotate = (this.currentPos.deltaX / 190) * 15;
+        this.currentPos.deltaX > 0 ? this.currentMusic.style.outlineColor = "green" : this.currentMusic.style.outlineColor = "red" ; 
+
         this.currentMusic.style.transform = 
             `translate(${this.currentPos.deltaX}px, ${-this.currentPos.deltaY}px) 
              rotate(${rotate}deg) scale(${this.currentPos.scale})`;
 
         if (rotate > 4) {
-            this.btnLike.style.transform = "scale(1.1)";
-            this.btnLike.style.backgroundColor = "#00C897";
-            this.btnLike.style.color = "#fff";
-            this.currentMusic.style.outlineColor = "green";
+            this.handleButtonEffect(this.btnLike , "like") ;
         } else if (rotate < -4) {
-            this.btnDisLike.style.transform = "scale(1.1)";
-            this.btnDisLike.style.backgroundColor = "#FF6B6B";
-            this.btnDisLike.style.color = "#fff";
-            this.currentMusic.style.outlineColor = "red";
+            this.handleButtonEffect(this.btnDisLike , "dislike") ;
         } else {
             this.currentMusic.style.outlineColor = "transparent";
         }
     },
 
+    //Hàm kéo kết thúc
     handlerOnTouchEnd(e) {
         if (!this.dragging || !this.currentMusic) return;
         
@@ -165,6 +167,7 @@ const musicPlayer = {
         this.performSwipe(deltaX);
     },
 
+    // Hàm bấm không kéo
     performSwipe(deltaX) {
         if (!this.currentMusic) return;
 
@@ -174,26 +177,25 @@ const musicPlayer = {
         this.currentMusic.style.transform = 
             `translate(${deltaX}px, ${-this.currentPos.deltaY}px) 
              rotate(${rotate}deg) scale(${this.currentPos.scale})`;
-        this.currentMusic.style.opacity = 0;
 
+        this.currentMusic.style.opacity = 0;
         
         if (rotate > 4) {
             this.btnLike.style.backgroundColor = "#00C897";
             this.btnLike.style.color = "#fff";
+
             this.currentMusic.style.outlineColor = "green";
 
         } else if (rotate < -4) {
             this.btnDisLike.style.backgroundColor = "#FF6B6B";
             this.btnDisLike.style.color = "#fff";
+
             this.currentMusic.style.outlineColor = "red";
 
-        } else {
-            this.currentMusic.style.outlineColor = "transparent";
-            this.currentMusic.style.transition = "none";
-            
-        }   
+        }  
 
         this.stack.push(this.musics[this.currentIndex]);
+
         this.currentMusic.addEventListener('transitionend', () => {
             this.currentMusic.remove();
             this.resetButtons();
@@ -203,7 +205,7 @@ const musicPlayer = {
                 deltaY: 40,
                 scale: 1.06
             };
-        }, { once: true });
+        });
 
         setTimeout(() => {
             this.nextMusic();
@@ -216,7 +218,6 @@ const musicPlayer = {
     },
 
     nextMusic() {
-
         this.isPlaying = true ;
         if (this.currentIndex - 1 >= 0) {
             this.currentIndex = this.currentIndex - 1 ;
@@ -230,8 +231,8 @@ const musicPlayer = {
         this.setupMusic();
        
     },
+
     prevMusic() {
-       
         this.isPlaying = true;
         if (this.currentIndex <= this.musics.length) {
             this.currentIndex = this.currentIndex + 1;
@@ -243,36 +244,33 @@ const musicPlayer = {
         this.setupMusic();
     },
 
+    //Phát nhạc
     handlePlayPause() {
         if (this.currentIndex < 0 || this.currentIndex >= this.musics.length) return;
-        
         if (this.audio.paused) {
             this.audio.play();
         } else {
             this.audio.pause();
         }
     },
+    //Vote xem card music bay bên nào
+    handleVote(direction) {
+        return (e) => {
+            e.preventDefault();
+            e.stopPropagation(); //tránh bay qua nút khế bị tự tắt
+            if (this.dragging || this.currentIndex < 0) return;
 
-    handleLike(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.dragging) return; 
-        this.forceSwipe(150);
-        this.audio.pause() ; 
+            this.forceSwipe(direction);
+            this.audio.pause();
+        };
     },
-
-    handleDislike(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.dragging) return; 
-        this.forceSwipe(-150);
-        this.audio.pause() ; 
-    },
-
+    //Prev lại
     handleBack(e) {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopPropagation(); //tránh bay qua nút khế bị tự tắt
+        
         if (this.dragging) return;
+
         if(this.stack.length === 0) return ;  
         const stackItem = this.stack.pop(); 
         this.prevMusic();
@@ -283,6 +281,7 @@ const musicPlayer = {
         this.musicList.appendChild(returnMusic);
 
     } ,
+
     handleShuffleMusic(e) {
         for (let i = this.musics.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
@@ -294,6 +293,7 @@ const musicPlayer = {
         this.currentIndex = this.musics.length - 1 ; 
         this.setupMusic() ; 
     },
+    // UpdateStyle thanh input range
     updateStyleRunnable() {
         const val = this.progress.value;
         progress.style.background = `linear-gradient(to right, #16161a ${val}%, #444 25%)`;
@@ -301,8 +301,8 @@ const musicPlayer = {
 
     setupEventControls() {
         this.play.onclick = this.handlePlayPause.bind(this);
-        this.btnLike.onclick = this.handleLike.bind(this);
-        this.btnDisLike.onclick = this.handleDislike.bind(this);
+        this.btnLike.onclick = this.handleVote.call(this , 100);
+        this.btnDisLike.onclick = this.handleVote.call(this , -100);
         this.btnBack.onclick = this.handleBack.bind(this) ; 
         this.btnShuffle.onclick = this.handleShuffleMusic.bind(this) ;
 
