@@ -19,7 +19,6 @@ Một ứng dụng phát nhạc mini hiện đại với giao diện đẹp mắ
 
 ### Chế độ trộn (Shuffle)
 - Nhạc được trộn ngẫu nhiên để tăng trải nghiệm
-- Đảm bảo không bị lặp khi chưa trộn lại danh sách
 
 ## Cách sử dụng
 
