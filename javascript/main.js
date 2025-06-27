@@ -27,6 +27,33 @@ const musicPlayer = {
             title: "不做你的朋友",
             artist: "高旭-FelixBennett",
             audio: "./audios/audio1.mp3"
+        },{
+            id: 5,
+            img: "./images/image5.jpg",
+            title: "沉溺",
+            artist: "你让我的心不再结冰",
+            audio: "./audios/audio5.mp3"
+        },
+        {
+            id: 6,
+            img: "./images/image6.jpg",
+            title: "Peaches",
+            artist: "Drop-Zone Remix",
+            audio: "./audios/audio6.mp3"
+        },
+        {
+            id: 7,
+            img: "./images/image7.jpg",
+            title: "就忘了吧",
+            artist: "架子鼓版",
+            audio: "./audios/audio7.mp3"
+        },
+        {
+            id: 8,
+            img: "./images/image8.jpg",
+            title: "If You",
+            artist: "BigBang",
+            audio: "./audios/audio8.mp3"
         }
     ],
     currentMusic: null,
