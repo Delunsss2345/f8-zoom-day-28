@@ -59,10 +59,11 @@ const musicPlayer = {
     currentMusic: null,
     currentIndex: 0,
     isPlaying: false,
+    isStopVolume : false ,
     dragging: false,
     stack : [] , 
     currentPos: { x: 0, deltaX: 0, deltaY: 40, scale: 1.06 },
-
+    isRepeat : false ,
     getTouchX(e) {
         const touch = e.touches?.[0] || e.changedTouches?.[0];
         return touch?.clientX ?? e.clientX ?? 0;
@@ -92,22 +93,26 @@ const musicPlayer = {
         artist.className = "music-artist";
         artist.textContent = music.artist;
 
-        info.appendChild(title);
-        info.appendChild(artist);
+        const musicPlay = document.createElement("figure") ; 
+        const musicPlayImage = document.createElement('img');
+        musicPlay.className = "music-playAvatar" ;
+        musicPlayImage.src = music.img;
+        musicPlayImage.alt = "Song Thumbnail";
+        musicPlay.appendChild(musicPlayImage);
+
+        const infoGroup = document.createElement('div') ; 
+        infoGroup.className = "music-info-group" ;
+        infoGroup.appendChild(title);
+        infoGroup.appendChild(artist);
+
+
+        info.appendChild(infoGroup);
+        info.appendChild(musicPlay) ;
+
 
         musicItem.appendChild(thumbnail);
         musicItem.appendChild(info);
-
         return musicItem;
-    },
-
-    resetButtons() {
-        this.btnLike.style.transform = "scale(1)";
-        this.btnDisLike.style.transform = "scale(1)";
-        this.btnLike.style.backgroundColor = "#16161a";
-        this.btnDisLike.style.backgroundColor = "#16161a";
-        this.btnLike.style.color = "";
-        this.btnDisLike.style.color = "";
     },
 
     renderMusic() {
@@ -137,6 +142,7 @@ const musicPlayer = {
             scale: 1.06
         };
     },
+
     //Hàm gộp hiệu ứng
     handleButtonEffect(btn, status) {
         btn.style.transform = "scale(1.1)";
@@ -151,9 +157,8 @@ const musicPlayer = {
         e.preventDefault();
         this.currentPos.deltaX = this.getTouchX(e) - this.currentPos.x;
         
-        this.resetButtons();
         this.currentMusic.style.transition = "outline-color .2s";
-        
+
         const rotate = (this.currentPos.deltaX / 190) * 15;
         this.currentPos.deltaX > 0 ? this.currentMusic.style.outlineColor = "green" : this.currentMusic.style.outlineColor = "red" ; 
 
@@ -161,13 +166,15 @@ const musicPlayer = {
             `translate(${this.currentPos.deltaX}px, ${-this.currentPos.deltaY}px) 
              rotate(${rotate}deg) scale(${this.currentPos.scale})`;
 
-        if (rotate > 4) {
-            this.handleButtonEffect(this.btnLike , "like") ;
-        } else if (rotate < -4) {
-            this.handleButtonEffect(this.btnDisLike , "dislike") ;
+       if (rotate > 5) {
+            this.currentMusic.style.outlineColor = "green";
+        } else if (rotate < -5) {
+            this.currentMusic.style.outlineColor = "red";
         } else {
             this.currentMusic.style.outlineColor = "transparent";
         }
+
+           
     },
 
     //Hàm kéo kết thúc
@@ -181,7 +188,6 @@ const musicPlayer = {
             this.currentMusic.style.transition = "outline-color 0.2s, transform 0.2s ease";
             this.currentMusic.style.transform = "";
             this.currentMusic.style.outlineColor = "transparent";
-            this.resetButtons();
             this.currentPos = {
                 x: 0,
                 deltaX: 0,
@@ -208,24 +214,19 @@ const musicPlayer = {
         this.currentMusic.style.opacity = 0;
         
         if (rotate > 4) {
-            this.btnLike.style.backgroundColor = "#00C897";
-            this.btnLike.style.color = "#fff";
-
             this.currentMusic.style.outlineColor = "green";
-
+           
         } else if (rotate < -4) {
-            this.btnDisLike.style.backgroundColor = "#FF6B6B";
-            this.btnDisLike.style.color = "#fff";
-
+           
             this.currentMusic.style.outlineColor = "red";
-
-        }  
+        }  else {
+            this.currentMusic.style.outlineColor = "transparent";
+        }
 
         this.stack.push(this.musics[this.currentIndex]);
 
         this.currentMusic.addEventListener('transitionend', () => {
             this.currentMusic.remove();
-            this.resetButtons();
             this.currentPos = {
                 x: 0,
                 deltaX: 0,
@@ -246,6 +247,7 @@ const musicPlayer = {
 
     nextMusic() {
         this.isPlaying = true ;
+        this.currentPlayAvatar.classList.remove("play-avatar") ;  
         if (this.currentIndex - 1 >= 0) {
             this.currentIndex = this.currentIndex - 1 ;
         } 
@@ -261,7 +263,8 @@ const musicPlayer = {
 
     prevMusic() {
         this.isPlaying = true;
-        if (this.currentIndex <= this.musics.length) {
+        this.currentPlayAvatar.classList.remove("play-avatar") ;  
+        if (this.currentIndex < this.musics.length) {
             this.currentIndex = this.currentIndex + 1;
         } else {
             this.isPlaying = false;
@@ -276,21 +279,13 @@ const musicPlayer = {
         if (this.currentIndex < 0 || this.currentIndex >= this.musics.length) return;
         if (this.audio.paused) {
             this.audio.play();
+            this.currentPlayAvatar.classList.add("play-avatar") ;  
         } else {
             this.audio.pause();
+            this.currentPlayAvatar.classList.remove("play-avatar") ;  
         }
     },
-    //Vote xem card music bay bên nào
-    handleVote(direction) {
-        return (e) => {
-            e.preventDefault();
-            e.stopPropagation(); //tránh bay qua nút khế bị tự tắt
-            if (this.dragging || this.currentIndex < 0) return;
 
-            this.forceSwipe(direction);
-            this.audio.pause();
-        };
-    },
     //Prev lại
     handleBack(e) {
         e.preventDefault();
@@ -309,6 +304,35 @@ const musicPlayer = {
 
     } ,
 
+    handleRepeat(e) {
+        e.preventDefault() ; 
+        e.stopPropagation() ; 
+        const repeat = e.target.closest('.repeat') ; 
+        if(repeat) {
+            this.isRepeat = !this.isRepeat ; 
+            repeat.classList.toggle("active") ; 
+        }
+    } ,
+
+    handleVolume(e) {
+        e.preventDefault() ; 
+        e.stopPropagation() ; 
+        const volume = e.target.closest('.volume') ; 
+
+      
+        if(volume) {
+            this.isStopVolume = !this.isStopVolume ; 
+            if(this.isStopVolume) {
+                this.btnVolumeIcon.classList.remove("fa-volume-high") ;
+                this.btnVolumeIcon.classList.add("fa-volume-xmark") ;
+                this.audio.volume = 0 ; 
+            }else {
+                this.btnVolumeIcon.classList.add("fa-volume-high") ;
+                this.btnVolumeIcon.classList.remove("fa-volume-xmark") ;
+                this.audio.volume = 0.75 ; 
+            }
+        }
+    },
     handleShuffleMusic(e) {
         for (let i = this.musics.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
@@ -318,6 +342,7 @@ const musicPlayer = {
         }
         this.renderMusic() ; 
         this.currentIndex = this.musics.length - 1 ; 
+        this.stack = [] ;
         this.setupMusic() ; 
     },
     // UpdateStyle thanh input range
@@ -328,8 +353,8 @@ const musicPlayer = {
 
     setupEventControls() {
         this.play.onclick = this.handlePlayPause.bind(this);
-        this.btnLike.onclick = this.handleVote.call(this , 100);
-        this.btnDisLike.onclick = this.handleVote.call(this , -100);
+        this.btnRepeat.onclick = this.handleRepeat.bind(this) ;
+        this.btnVolume.onclick = this.handleVolume.bind(this) ;
         this.btnBack.onclick = this.handleBack.bind(this) ; 
         this.btnShuffle.onclick = this.handleShuffleMusic.bind(this) ;
 
@@ -357,7 +382,6 @@ const musicPlayer = {
 
         this.progress.onmousedown = () => {
             this.progress.seeking = true;
-          
         };
 
         this.progress.onmouseup = () => {
@@ -369,6 +393,14 @@ const musicPlayer = {
         };
 
         this.audio.onended = () => {
+            if(this.isRepeat) {
+                this.audio.currentTime = 0 ; 
+                setTimeout(() => {
+                    this.audio.play() ; 
+                },500)
+                return ;
+            }
+
             this.currentMusic.remove();
             this.stack.push(this.musics[this.currentIndex]);
             this.nextMusic();
@@ -377,7 +409,15 @@ const musicPlayer = {
 
     setCurrentMusic() {
         if (this.currentIndex >= 0) {
-            this.currentMusic = this.musicList.querySelector(`[data-music-id="${this.currentIndex}"]`);
+            setTimeout(() => {
+                this.currentMusic = this.musicList.querySelector(`[data-music-id="${this.currentIndex}"]`);
+                this.currentPlayAvatar = this.currentMusic.querySelector(".music-playAvatar") ;
+                if (this.isPlaying) {
+                    this.currentPlayAvatar.classList.add("play-avatar");
+                } else {
+                    this.currentPlayAvatar.classList.remove("play-avatar");
+                }
+            },500)
         } 
 
         this.audio.oncanplay = () => {
@@ -396,10 +436,12 @@ const musicPlayer = {
 
     init() {
         this.musicList = document.querySelector('.music-list');
-        this.btnLike = document.querySelector('.like');
-        this.btnDisLike = document.querySelector('.dislike');
+        this.btnVolume = document.querySelector('.control-btn.volume');
+        this.btnVolumeIcon = document.querySelector('.control-btn.volume .fa-solid');
+        this.btnRepeat = document.querySelector('.control-btn.repeat');
         this.btnShuffle = document.querySelector('.control-btn.shuffle')
         this.btnBack = document.querySelector('.control-btn.back') ; 
+        
         this.progress = document.getElementById("progress");
         this.play = document.querySelector('.control-btn.play');
         this.playIcon = document.querySelector(".play-icon");
@@ -409,7 +451,7 @@ const musicPlayer = {
         this.setupMusic();
         this.setupEventControls();
         this.renderMusic();
-
+        
         document.addEventListener('touchstart', this.handlerOnTouchStart.bind(this));
         document.addEventListener('touchmove', this.handlerOnTouchMove.bind(this));
         document.addEventListener('touchend', this.handlerOnTouchEnd.bind(this));
